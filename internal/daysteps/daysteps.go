@@ -3,6 +3,7 @@ package daysteps
 import (
 	"errors"
 	"fmt"
+	"spentcalories"
 	"strconv"
 	"strings"
 	"time"
@@ -44,6 +45,9 @@ func DayActionInfo(data string, weight, height float64) string {
 		return ""
 	}
 	distance := (float64(stepCount) * stepLength) / mInKm
-	calories := WalkingSpentCalories(stepCount, weight, height, walkingTime)
+	calories, err := spentcalories.WalkingSpentCalories(stepCount, weight, height, walkingTime)
+	if err != nil {
+		return ""
+	}
 	return fmt.Sprintf("Количество шагов: %d.\nДистанция составила %.2f.\nВы сожгли %.2f ккал.", stepCount, distance, calories)
 }
