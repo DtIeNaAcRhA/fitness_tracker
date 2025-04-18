@@ -3,10 +3,11 @@ package daysteps
 import (
 	"errors"
 	"fmt"
-	"spentcalories"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Yandex-Practicum/tracker/internal/spentcalories"
 )
 
 const (
@@ -38,7 +39,7 @@ func parsePackage(data string) (int, time.Duration, error) {
 func DayActionInfo(data string, weight, height float64) string {
 	stepCount, walkingTime, err := parsePackage(data)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		return ""
 	}
 	if err == errors.New("Количество шагов меньше либо равно 0") {
