@@ -42,7 +42,7 @@ func DayActionInfo(data string, weight, height float64) string {
 		fmt.Println(err)
 		return ""
 	}
-	if err == errors.New("Количество шагов меньше либо равно 0") {
+	if stepCount <= 0 { //errors.Is(err, errors.New("Количество шагов меньше либо равно 0"))???
 		return ""
 	}
 	distance := (float64(stepCount) * stepLength) / mInKm
