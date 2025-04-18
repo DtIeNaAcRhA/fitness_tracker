@@ -20,25 +20,27 @@ const (
 func parseTraining(data string) (int, string, time.Duration, error) {
 	splitedData := strings.Split(data, ",")
 	if len(splitedData) != 3 {
-		return 0, "", time.Duration(0), errors.New("Ошибка парсинга данных\nНеверно переданный формат данных")
+		return 0, "", time.Duration(0), errors.New("Ошибка парсинга данных в функции parseTraining()\nНеверно переданный формат данных")
 	}
 	stepCount, err := strconv.Atoi(splitedData[0])
 	if err != nil {
-		return 0, "", time.Duration(0), fmt.Errorf("Ошибка парсинга данных\nНе удалось распознать количество шагов\n %w", err)
+		return 0, "", time.Duration(0), fmt.Errorf("Ошибка парсинга данных в функции parseTraining()\nНе удалось распознать количество шагов\n %w", err)
 	}
 	if stepCount <= 0 {
 		return 0, "", time.Duration(0), errors.New("Количество шагов меньше либо равно 0")
 	}
 	walkingTime, err := time.ParseDuration(splitedData[2])
 	if err != nil {
-		return 0, "", time.Duration(0), fmt.Errorf("Ошибка парсинга данных\nНе удалось распознать продолжительность\n %w", err)
+		return 0, "", time.Duration(0), fmt.Errorf("Ошибка парсинга данных в функции parseTraining()\nНе удалось распознать продолжительность\n %w", err)
 	}
 	return stepCount, splitedData[1], walkingTime, nil
 
 }
 
 func distance(steps int, height float64) float64 {
-	// TODO: реализовать функцию
+	stepLen := height * stepLengthCoefficient
+	distance := (float64(steps) * stepLen) / mInKm
+	return distance
 }
 
 func meanSpeed(steps int, height float64, duration time.Duration) float64 {
