@@ -45,7 +45,7 @@ func distance(steps int, height float64) float64 {
 
 func meanSpeed(steps int, height float64, duration time.Duration) float64 {
 	if duration <= 0 {
-		return 0.0
+		return 0
 	}
 	distance := distance(steps, height)
 	meanSpeed := distance / duration.Hours()
@@ -53,13 +53,47 @@ func meanSpeed(steps int, height float64, duration time.Duration) float64 {
 }
 
 func TrainingInfo(data string, weight, height float64) (string, error) {
-	// TODO: реализовать функцию
+	stepCount, fitType, fitTime, err := parseTraining(data)
+	if err != nil {
+		return "", err
+	}
+	distance := distance(stepCount, height)
+	meanSpeed := meanSpeed(stepCount, height, fitTime)
+
+	switch fitType {
+	case "Бег":
+		calories, err := RunningSpentCalories(stepCount, weight, height, fitTime)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f ",
+			fitType, fitTime.Hours(), distance, meanSpeed, calories), nil
+	case "Ходьба":
+		calories, err := WalkingSpentCalories(stepCount, weight, height, fitTime)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf("Тип тренировки: %s\nДлительность: %.2f ч.\nДистанция: %.2f км.\nСкорость: %.2f км/ч\nСожгли калорий: %.2f ",
+			fitType, fitTime.Hours(), distance, meanSpeed, calories), nil
+	default:
+		return "", errors.New("Ошибка в функции TrainingInfo(), не удалось определить тип тренировки")
+	}
 }
 
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// TODO: реализовать функцию
+	if steps <= 0 || weight <= 0 || height <= 0 || duration < 0 {
+		return 0, errors.New("В функцию RunningSpentCalories() переданы некорректные данные")
+	}
+	meanSpeed := meanSpeed(steps, height, duration)
+	calories := (duration.Minutes() * weight * meanSpeed) / float64(minInH)
+	return calories, nil
 }
 
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// TODO: реализовать функцию
+	if steps <= 0 || weight <= 0 || height <= 0 || duration < 0 {
+		return 0, errors.New("В функцию WalkingSpentCalories() переданы некорректные данные")
+	}
+	meanSpeed := meanSpeed(steps, height, duration)
+	calories := (duration.Minutes() * weight * meanSpeed) / float64(minInH)
+	return calories * walkingCaloriesCoefficient, nil
 }
